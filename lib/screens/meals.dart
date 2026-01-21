@@ -6,48 +6,57 @@ import 'package:meals/widgets/meal_list_item.dart';
 class MealsScreen extends StatelessWidget {
   final String? title;
   final List<Meal> meals;
-  const MealsScreen({super.key, required this.meals, this.title});
+  final void Function(Meal meal) onToggleFavorite;
+  const MealsScreen({super.key, required this.meals, this.title, required this.onToggleFavorite});
 
   @override
   Widget build(BuildContext context) {
-    Widget content = ListView.separated(
-      separatorBuilder: (_, __) {
-        return const SizedBox(height: 8);
-      },
-      itemCount: meals.length,
-      itemBuilder: (_, index) {
-        final currentItem = meals[index];
-        return meals.isNotEmpty
-            ? MealListItem(
+    Widget content = meals.isNotEmpty
+        ? ListView.separated(
+            separatorBuilder: (_, __) {
+              return const SizedBox(height: 8);
+            },
+            itemCount: meals.length,
+            itemBuilder: (_, index) {
+              final currentItem = meals[index];
+              return MealListItem(
                 meal: currentItem,
                 onSelectMeal: () {
                   Navigator.of(
                     context,
-                  ).push(MaterialPageRoute(builder: (ctx) => MealDetailScreen(meal: currentItem)));
+                  ).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => MealDetailScreen(
+                        meal: currentItem,
+                        onToggleFavorite: onToggleFavorite,
+                      ),
+                    ),
+                  );
                 },
-              )
-            : Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'No hay elementos que mostrar',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.surface),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Prueba seleccionar otra categoría',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
-                    ),
-                  ],
-                ),
               );
-      },
-    );
+            },
+          )
+        : Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'No hay elementos que mostrar',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Prueba seleccionar otra categoría',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ],
+            ),
+          );
 
     if (title == null) {
       return content;
